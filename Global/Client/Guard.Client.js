@@ -1,8 +1,7 @@
 const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
 const { black } = require("chalk")
 const { glob } = require("glob")
-const { promisify } = require("util")
-const globPromise = promisify(glob)
+const globPromise = (...args) => glob(...args)
 const fs = require('fs')
 
 const sistem = global.sistem = require('../Settings/_system.json');
