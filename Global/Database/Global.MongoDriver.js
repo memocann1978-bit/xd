@@ -1,24 +1,23 @@
-const { bgBlue, black, green } = require("chalk");
-const mongoosem = require("mongoose")
-const sistem = require("../Settings/_system.json")
+const mongoose = require('mongoose');
 class Mongoose {
-
-    static Connect(active = sistem.Settings.Database.Active, url = sistem.Settings.Database.MongoURL) {
-        if(active) {
-            mongoosem.set('strictQuery', true);
-            mongoosem.connect(url, {
-                useNewUrlParser: true,
-                useUnifiedTopology: false,
-            }).then(() => {
-                setTimeout(() => {
-                    client._logger.log(`${black.bgHex('#D9A384')(client._dirname.toUpperCase())} Connected to the MongoDB.`, "mongodb");
-                }, 3000)
-            }).catch((err) => {
-                client._logger.log(`${black.bgHex('#D9A384') (client._dirname.toUpperCase())} Unable to connect to the MongoDB.` + err, "error");
-                return process.exit()
-            });
+    static async Connect(active, url, client = global.client) {
+        if (!active) {
+            client?._logger?.log('MongoDB is disabled; continuing without database.', 'warn');
+            return false;
+        }
+        if (!url) throw new Error('MongoDB is enabled but MongoURL is empty. Set MONGODB_URI.');
+        mongoose.set('strictQuery', true);
+        try {
+            await mongoose.connect(url);
+            client?._logger?.log('Connected to MongoDB.', 'mongodb');
+            return true;
+        } catch (error) {
+            client?._logger?.log('MongoDB connection failed: ' + error.message, 'error');
+            throw error;
         }
     }
+    static async Disconnect() {
+        if (mongoose.connection.readyState !== 0) await mongoose.disconnect();
+    }
 }
-
-module.exports = { Mongoose }
+module.exports = { Mongoose };
