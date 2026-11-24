@@ -13,7 +13,6 @@ module.exports = {
         const embed = new EmbedBuilder()
             .setColor(0x5865F2)
             .setTitle(guild.name)
-            .setThumbnail(guild.iconURL({ size: 512 }))
             .addFields(
                 { name: 'Sunucu sahibi', value: owner ? owner.user.tag : 'Bilinmiyor', inline: true },
                 { name: 'Üye sayısı', value: String(guild.memberCount), inline: true },
@@ -25,6 +24,8 @@ module.exports = {
                 { name: 'Sunucu kimliği', value: guild.id, inline: false }
             )
             .setTimestamp();
+        const icon = guild.iconURL({ size: 512 });
+        if (icon) embed.setThumbnail(icon);
         return interaction.reply({ embeds: [embed], ephemeral: true });
     }
 };
