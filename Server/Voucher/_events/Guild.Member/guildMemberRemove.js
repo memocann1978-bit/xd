@@ -22,7 +22,7 @@ class GuildMemberRemove extends Event {
         const roles = global.roller || {};
         const restricted = [roles.jailRolü, roles.şüpheliRolü, roles.underworldRolü, roles.yasaklıTagRolü, ...(roles.kayıtsızRolleri || [])].filter(Boolean);
         if (restricted.some(roleID => member.roles.cache.has(roleID))) return;
-        if (typeof member.Left === 'function') await member.Left().catch(() => null);
+        if (typeof member.Left === 'function') await Promise.resolve(member.Left()).catch(() => null);
     }
 }
 
