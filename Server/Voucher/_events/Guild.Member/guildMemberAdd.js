@@ -95,7 +95,9 @@ class guildMemberAdd extends Event {
         if(OneWeak) {
             if (_set.şüpheliRolü) await member.setRoles(_set.şüpheliRolü)
             await hoşgeldinKanal.send(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`);
-            return member.guild.kanalBul("şüpheli-log").send({embeds: [new genEmbed().setDescription(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`)]});
+            const suspiciousLog = member.guild.kanalBul("şüpheli-log");
+            if (suspiciousLog) return suspiciousLog.send({embeds: [new genEmbed().setDescription(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`)]});
+            return;
         };
         if(_set.yasakTaglar && _set.yasakTaglar.some(tag => member.user.displayName.includes(tag))) {
             if (_set.yasaklıTagRolü) await member.setRoles(_set.yasaklıTagRolü)
@@ -104,7 +106,8 @@ class guildMemberAdd extends Event {
 \`\`\`
 Üzerinizde bulunan yasaklı tag çıkarıldığında kayıtlı iseniz otomatik kayıt olacaksınız kayıtlı değilseniz kayıtsıza tekrardan düşeceksiniz.
 \`\`\``).catch(err => {})
-            await member.guild.kanalBul("yasaklı-tag-log").send({embeds: [new genEmbed().setDescription(`${member} isimli üye sunucuya katıldı fakat isminde yasaklı tag/etiket barındırdığından dolayı yasaklı olarak işaretlendi.`)]});
+            const bannedTagLog = member.guild.kanalBul("yasaklı-tag-log");
+            if (bannedTagLog) await bannedTagLog.send({embeds: [new genEmbed().setDescription(`${member} isimli üye sunucuya katıldı fakat isminde yasaklı tag/etiket barındırdığından dolayı yasaklı olarak işaretlendi.`)]});
             return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı fakat ismininde \` Yasaklı Tag \` bulundurduğu için cezalı olarak belirlendi.`);
         };
         if(Jail) {
