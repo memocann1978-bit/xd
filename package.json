@@ -31,7 +31,8 @@
     "start:moderation": "node Server/Moderation/Global.Moderation.js",
     "start:executive": "node Server/Executive/Global.Executive.js",
     "check": "node scripts/check-syntax.js",
-    "test": "node --test"
+    "test": "node --test",
+    "start:voucher": "node Server/Voucher/Global.Voucher.js"
   },
   "author": "",
   "license": "SEE LICENSE"
