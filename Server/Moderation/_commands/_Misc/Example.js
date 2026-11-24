@@ -9,7 +9,7 @@ class Adver extends Command {
             usage: "",
             category: "",
             aliases: [],
-            enabled: true,
+            enabled: false,
             cooldown: 3500,
             permissions: [],
         });
