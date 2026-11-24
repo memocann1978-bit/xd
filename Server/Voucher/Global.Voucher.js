@@ -4,8 +4,17 @@ const { GUILD } = require('../../Global/Source/Settings');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 process.chdir(__dirname);
 
+let client;
+
+async function shutdown(signal) {
+    console.log('[' + signal + '] Shutting down Voucher service...');
+    if (client) client.destroy();
+    await Mongoose.Disconnect().catch(error => console.error('MongoDB shutdown error:', error.message));
+    process.exit(0);
+}
+
 async function start() {
-    const client = global.client = new MODLOFF();
+    client = global.client = new MODLOFF();
     client._dirname = 'Voucher';
     const settings = client.sistem.Settings;
     const database = settings.Database || {};
@@ -24,7 +33,12 @@ async function start() {
     await client.connect(token);
 }
 
-start().catch(error => {
+process.once('SIGINT', () => shutdown('SIGINT'));
+process.once('SIGTERM', () => shutdown('SIGTERM'));
+
+start().catch(async error => {
     console.error('[Voucher startup failed]', error);
+    if (client) client.destroy();
+    await Mongoose.Disconnect().catch(() => null);
     process.exitCode = 1;
 });
