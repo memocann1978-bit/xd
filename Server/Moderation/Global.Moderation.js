@@ -2,6 +2,7 @@ const { MODLOFF } = require('../../Global/Client/Global.Client');
 const { Mongoose } = require('../../Global/Database/Global.MongoDriver');
 const { GUILD } = require('../../Global/Source/Settings');
 require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
+process.chdir(__dirname);
 
 async function start() {
     const client = global.client = new MODLOFF();
