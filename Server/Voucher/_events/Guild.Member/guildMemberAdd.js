@@ -94,7 +94,7 @@ class guildMemberAdd extends Event {
         }
         if(OneWeak) {
             await member.setRoles(_set.şüpheliRolü)
-            await member.guild.channels.cache.get(_set.hoşgeldinKanalı).send(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`);
+            await hoşgeldinKanal.send(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`);
             return member.guild.kanalBul("şüpheli-log").send({embeds: [new genEmbed().setDescription(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`)]});
         };
         if(_set.yasakTaglar && _set.yasakTaglar.some(tag => member.user.displayName.includes(tag))) {
@@ -105,24 +105,24 @@ class guildMemberAdd extends Event {
 Üzerinizde bulunan yasaklı tag çıkarıldığında kayıtlı iseniz otomatik kayıt olacaksınız kayıtlı değilseniz kayıtsıza tekrardan düşeceksiniz.
 \`\`\``).catch(err => {})
             await member.guild.kanalBul("yasaklı-tag-log").send({embeds: [new genEmbed().setDescription(`${member} isimli üye sunucuya katıldı fakat isminde yasaklı tag/etiket barındırdığından dolayı yasaklı olarak işaretlendi.`)]});
-            return member.guild.channels.cache.get(_set.hoşgeldinKanalı).send(`${member} isimli üye sunucumuza katıldı fakat ismininde \` Yasaklı Tag \` bulundurduğu için cezalı olarak belirlendi.`);
+            return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı fakat ismininde \` Yasaklı Tag \` bulundurduğu için cezalı olarak belirlendi.`);
         };
         if(Jail) {
             await member.setRoles(_set.jailRolü)
-            return member.guild.channels.cache.get(_set.hoşgeldinKanalı).send(`${member} isimli üye sunucumuza katıldı fakat aktif bir cezalandırılması bulunduğu için tekrardan cezalandırıldı.`);
+            return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı fakat aktif bir cezalandırılması bulunduğu için tekrardan cezalandırıldı.`);
         };
         if(Underworld) {
           await member.setRoles(_set.underworldRolü)
-          return member.guild.channels.cache.get(_set.hoşgeldinKanalı).send(`${member} isimli üye sunucumuza katıldı fakat aktif bir Underworld cezası bulunduğu için tekrardan Underworld'e gönderildi.`);
+          return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı fakat aktif bir Underworld cezası bulunduğu için tekrardan Underworld'e gönderildi.`);
         };
         if(Forceban) {
             await member.ban({ reason: 'Forceban tarafından yasaklandı.' })
-            return member.guild.channels.cache.get(_set.hoşgeldinKanalı).send(`${member} isimli üye sunucumuza katıldı. fakat Kalkmazban sistemi ile yasaklandığından dolayı sunucumuzda tekrar yasaklandı.`);
+            return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı. fakat Kalkmazban sistemi ile yasaklandığından dolayı sunucumuzda tekrar yasaklandı.`);
         };
         if(cezaPuan >= 50) {
             await member.setRoles(_set.şüpheliRolü)
             await member.send({embeds: [new genEmbed().setDescription(`${member.guild.emojiGöster(emojiler.Cezalandırıldı)} ${member} Ceza puanın \`${cezaPuan}\` olduğu için otomatik olarak şüpheli hesap olarak belirlendin.`)]}).catch(x => {});
-          return member.guild.channels.cache.get(_set.hoşgeldinKanalı).send(`${member} isimli üye sunucumuza katıldı, Ceza puanı \`50\` üzeri olduğu için şüpheli olarak belirlendi.`);
+          return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı, Ceza puanı \`50\` üzeri olduğu için şüpheli olarak belirlendi.`);
         }
 
         if (_set.otoKayıt && User && User.Name && User.Names && User.Gender) {
