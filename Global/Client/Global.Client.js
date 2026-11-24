@@ -105,7 +105,7 @@ class MODLOFF extends Client {
     }
 
     async connect(token) {
-        if (!token) throw new Error(this._dirname + ' bot token is missing. Set the matching environment variable or Settings.Login value.');
+        if (typeof token !== 'string' || !token.trim()) throw new Error(this._dirname + ' bot token is missing. Set Settings.Login.' + this._dirname + ' in Global/Settings/_system.json.');
         try {
             await this.login(token);
             return this.user;
