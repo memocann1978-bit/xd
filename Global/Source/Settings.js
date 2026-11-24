@@ -1,4 +1,5 @@
 const Guilds = require('../Database/Schemas/Guild.Settings');
+const createDefaultSettings = require('./SettingsDefaults');
 
 class GUILD {
     static async fetch(id) {
@@ -9,6 +10,11 @@ class GUILD {
             await Guilds.updateOne({ guildID: id }, { $setOnInsert: { _id: 1, guildID: id } }, { upsert: true });
             const data = await Guilds.findOne({ guildID: id });
             if (!data) throw new Error('Guild settings document could not be loaded for ' + id + '.');
+
+            // Backfill missing settings for databases created by older bot versions.
+            const mergedSettings = { ...createDefaultSettings(), ...(data.Ayarlar || {}) };
+            await Guilds.updateOne({ guildID: id }, { $set: { Ayarlar: mergedSettings } });
+            data.Ayarlar = mergedSettings;
 
             const client = global.client;
             global.ayarlar = global._settings = client._settings = data.Ayarlar;
