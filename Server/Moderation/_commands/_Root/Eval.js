@@ -22,18 +22,15 @@ class Eval extends Command {
     
     }
 
-    async onRequest (client, message, args) {
-        if (!args[0]) return;
-        let code = args.join(" ");
-    
-        try {
-          var result = clean(await eval(code));
-          if (result.includes(client.token))
-            return message.channel.send({ content: "Tokeni yarramın başını yersen alırsın orospu evladı"});
-            message.channel.send({ content: `\`\`\`js\n${result}\n\`\`\``});
-        } catch (e) {
-                return message.channel.send({ content: `\`\`\`js\n${e}\n\`\`\`` });
-            }
+    async onRequest(client, message) {
+        if (process.env.ENABLE_UNSAFE_EVAL !== 'true') {
+            return message.reply({ content: 'Eval komutu güvenlik nedeniyle devre dışı. Yalnızca güvenilir geliştirme ortamında ENABLE_UNSAFE_EVAL=true ile açılabilir.' });
+        }
+        if (!client.sistem.Settings.root?.includes(message.author.id)) {
+            return message.reply({ content: 'Bu komutu yalnızca bot geliştiricisi kullanabilir.' });
+        }
+        return message.reply({ content: 'Eval yeniden tasarlanıyor; geçici olarak kullanılamıyor.' });
+    }
     }
 }
 
