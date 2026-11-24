@@ -16,7 +16,7 @@ Bu liste geliştirme dalında bulunan özellikleri gösterir; her özelliğin ge
 
 - Node.js 18.18 veya üzeri (önerilen: Node.js 20 LTS)
 - MongoDB bağlantısı (veritabanı kullanan modüller için)
-- Discord Developer Portal üzerinden oluşturulmuş bot uygulamaları ve gerekli Gateway Intents izinleri
+- Discord Developer Portal üzerinden oluşturulmuş bot uygulamaları; Bot sekmesinde Server Members, Message Content ve Presence privileged intent'leri etkin olmalıdır.
 
 ## Kurulum
 
