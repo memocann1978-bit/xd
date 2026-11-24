@@ -25,7 +25,7 @@ Bu liste geliştirme dalında bulunan özellikleri gösterir; her özelliğin ge
 3. `.env.example` dosyasını `.env` olarak kopyalayın.
 4. `.env` içindeki `MODERATION_BOT_TOKEN`, `EXECUTIVE_BOT_TOKEN`, `VOUCHER_BOT_TOKEN` ve `MONGODB_URI` değerlerini doldurun.
 5. `Global/Settings/_system.json` içindeki `Settings.guildID`, `Settings.root`, `Settings.prefix` ve diğer sunucu ayarlarını yapılandırın. Gerçek token veya veritabanı parolalarını bu dosyaya yazmayın.
-6. `npm run check` ile JavaScript sözdizimini doğrulayın.
+6. `npm run check` ile JavaScript sözdizimini doğrulayın; `npm test` ile regresyon testlerini çalıştırın.
 7. `npm start` ile PM2 üzerinden Moderation, Executive ve Voucher servislerini başlatın. Tek servis için `npm run start:moderation`, `npm run start:executive` veya `npm run start:voucher` kullanın.
 
 ## Güvenlik
