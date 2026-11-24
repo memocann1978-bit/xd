@@ -1,11 +1,7 @@
 const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
 const path = require('path');
 const fs = require('fs');
-const { pathToFileURL } = require('url');
-const { black } = require('chalk');
 const { glob } = require('glob');
-const { promisify } = require('util');
-const globPromise = promisify(glob);
 
 global.sistem = global.system = require('../Settings/_system.json');
 
@@ -72,7 +68,7 @@ class MODLOFF extends Client {
         if (slash) {
             const slashRoot = this._getModuleDirectory('_slashcommands');
             if (!fs.existsSync(slashRoot)) return;
-            const files = await globPromise(path.join(slashRoot, '*', '*.js'));
+            const files = await glob(path.join(slashRoot, '*', '*.js'));
             const definitions = [];
             for (const file of files) {
                 const command = require(file);
