@@ -13,10 +13,10 @@ Discord.js v14 tabanlı, modüler topluluk yönetimi ve moderasyon botu.
 1. Depoyu klonlayın ve proje klasörüne girin.
 2. `npm install` komutunu çalıştırın.
 3. `.env.example` dosyasını `.env` olarak kopyalayın.
-4. `.env` içindeki `MODERATION_BOT_TOKEN`, `EXECUTIVE_BOT_TOKEN` ve `MONGODB_URI` değerlerini doldurun.
+4. `.env` içindeki `MODERATION_BOT_TOKEN`, `EXECUTIVE_BOT_TOKEN`, `VOUCHER_BOT_TOKEN` ve `MONGODB_URI` değerlerini doldurun.
 5. `Global/Settings/_system.json` içindeki `Settings.guildID`, `Settings.root`, `Settings.prefix` ve diğer sunucu ayarlarını yapılandırın. Gerçek token veya veritabanı parolalarını bu dosyaya yazmayın.
 6. `npm run check` ile JavaScript sözdizimini doğrulayın.
-7. `npm start` ile PM2 üzerinden servisleri başlatın. Tek servis için `npm run start:moderation` veya `npm run start:executive` kullanın.
+7. `npm start` ile PM2 üzerinden Moderation, Executive ve Voucher servislerini başlatın. Tek servis için `npm run start:moderation`, `npm run start:executive` veya `npm run start:voucher` kullanın.
 
 ## Güvenlik
 
