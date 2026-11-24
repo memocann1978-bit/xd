@@ -31,19 +31,27 @@ class guildMemberAdd extends Event {
     }    
 
     async onLoad(member) {
-        if(member.guild.id != global.sistem.Settings.guildID ) return;
+        if (!member?.guild || !member.user || member.guild.id !== global.sistem.Settings.guildID) return;
         let User = await Users.findOne({ _id: member.id }) 
         let Jail = await Jails.findOne({ _id: member.id });
         let Forceban = await Forcebans.findOne({ _id: member.id });
         let Underworld =  await Punitives.findOne({Member: member.id, Type: "Underworld", Active: true})
         const _findServer = await Settings.findOne({ guildID: sistem.Settings.guildID })
+        if (!_findServer?.Ayarlar) {
+            client?._logger?.log('Voucher: guild settings are missing; member join processing skipped.', 'warn');
+            return;
+        }
         const _set = global._set = _findServer.Ayarlar
         let OneWeak = Date.now()-member.user.createdTimestamp <= 1000*60*60*24*7;
-        member = member.guild.members.cache.get(member.id)
         let cezaPuan = await member.cezaPuan()
 
         const guildInvites = getInvite.get(member.guild.id) || new Collection()
-        const invites = await member.guild.invites.fetch();
+        let invites = new Collection();
+        try {
+            invites = await member.guild.invites.fetch();
+        } catch (error) {
+            client?._logger?.log('Invite tracking unavailable: ' + error.message, 'warn');
+        }
         const invite = invites.find((inv) => guildInvites.has(inv.code) && inv.uses > guildInvites.get(inv.code).uses) || guildInvites.find((x) => !invites.has(x.code)) || member.guild.vanityURLCode;
         const cacheInvites = new Collection();
         invites.map((inv) => { cacheInvites.set(inv.code, { code: inv.code, uses: inv.uses, inviter: inv.inviter }); });
@@ -58,9 +66,15 @@ class guildMemberAdd extends Event {
           } else if (invite === member.guild.vanityURLCode) { 
             davettaslak = `Özel URL`
           } else {
-              davettaslak = member.guild.members.cache.get(invite.inviter.id) ? `${member.guild.members.cache.get(invite.inviter.id)}`: `Özel URL`
+              const inviterID = invite?.inviter?.id;
+              const inviter = inviterID ? member.guild.members.cache.get(inviterID) : null;
+              davettaslak = inviter ? `${inviter}` : `Özel URL`;
           }
-          let hoşgeldinKanal = member.guild.channels.cache.get(_set.hoşgeldinKanalı) || member.guild.kanalBul(_set.hoşgeldinKanalı)
+          let hoşgeldinKanal = member.guild.channels.cache.get(_set.hoşgeldinKanalı) || member.guild.kanalBul(_set.hoşgeldinKanalı);
+          if (!hoşgeldinKanal) {
+              client?._logger?.log('Voucher: welcome channel is not configured or unavailable.', 'warn');
+              return;
+          }
 
         let amkSürekliÇıkıyoGiriyo = alwaysJoined.get(member.id) || 0
         if(amkSürekliÇıkıyoGiriyo >= 3) {
