@@ -1,7 +1,6 @@
 const { MODLOFF } = require('../../Global/Client/Global.Client');
 const { Mongoose } = require('../../Global/Database/Global.MongoDriver');
 const { GUILD } = require('../../Global/Source/Settings');
-require('dotenv').config({ path: require('path').resolve(__dirname, '../../.env') });
 process.chdir(__dirname);
 
 let client;
@@ -18,8 +17,8 @@ async function start() {
     client._dirname = 'Moderation';
     const settings = client.sistem.Settings;
     const database = settings.Database || {};
-    const mongoUrl = process.env.MONGODB_URI || database.MongoURL;
-    const token = process.env.MODERATION_BOT_TOKEN || client.sistem.Login.Moderation;
+    const mongoUrl = database.MongoURL;
+    const token = client.sistem.Login.Moderation;
 
     if (database.Active) {
         await Mongoose.Connect(true, mongoUrl, client);
