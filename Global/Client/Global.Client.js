@@ -1,121 +1,121 @@
-const { Client, GatewayIntentBits, Partials, Collection, ApplicationCommandType } = require("discord.js")
-const { GUILD } = require('../Source/Settings');
-const { black } = require("chalk");
-global.sistem = global.system = require('../Settings/_system.json');
+const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
+const path = require('path');
 const fs = require('fs');
-const { glob } = require("glob");
-const { promisify } = require("util");
+const { pathToFileURL } = require('url');
+const { black } = require('chalk');
+const { glob } = require('glob');
+const { promisify } = require('util');
 const globPromise = promisify(glob);
 
-class MODLOFF extends Client {
-    constructor(options) {
-        /**
-        * 
-        * @param {Object} options
-        * @returns {Promise<Client>}
-        * 
-        */
-        super({
-            options,
-            intents: Object.keys(GatewayIntentBits),
-            partials: Object.keys(Partials)
-        })
-        
-        this._logger = require("../Functions/Logger")
-        require("../Functions/Dates")
-        this.genEmbed = global.genEmbed = require("../Source/Embed")
-        this.sistem = this.system = require("../Settings/_system.json")
-        GUILD.fetch(this.sistem.Settings.guildID)
-        this.commands = new Collection()
-        this.aliases = new Collection()
-        this.slashcommands = new Collection()
-        this._dirname;
-        this.prefix = ["."]
-        this.on("disconnect", () => this._logger.log("Bot is disconnecting...", "disconnecting"))
-        .on("reconnecting", () => this._logger.log("Bot reconnecting...", "reconnecting"))
-        .on("error", (e) => this._logger.log(e, "error"))
-        .on("warn", (info) => this._logger.log(info, "warn"));
+global.sistem = global.system = require('../Settings/_system.json');
 
-       // process.on("unhandledRejection", (err) => { this._logger.log(err, "caution") });
-        process.on("warning", (warn) => { this._logger.log(warn, "varn") });
-      
-        process.on("uncaughtException", err => {
-            const hata = err.stack.replace(new RegExp(`${__dirname}/`, "g"), "./");
-            console.error("Beklenmedik Hata: ", hata);
+class MODLOFF extends Client {
+    constructor(options = {}) {
+        super({
+            ...options,
+            intents: options.intents || [
+                GatewayIntentBits.Guilds,
+                GatewayIntentBits.GuildMembers,
+                GatewayIntentBits.GuildModeration,
+                GatewayIntentBits.GuildMessages,
+                GatewayIntentBits.MessageContent,
+                GatewayIntentBits.GuildVoiceStates
+            ],
+            partials: options.partials || [Partials.Channel, Partials.GuildMember, Partials.Message, Partials.User]
         });
 
-        require("../Functions/Numbers")
-        require("../Prototypes/_function")
+        this._logger = require('../Functions/Logger');
+        require('../Functions/Dates');
+        this.genEmbed = global.genEmbed = require('../Source/Embed');
+        this.sistem = this.system = global.sistem;
+        this.commands = new Collection();
+        this.aliases = new Collection();
+        this.slashcommands = new Collection();
+        this._dirname = null;
+
+        this.on('disconnect', () => this._logger.log('Bot is disconnecting...', 'disconnecting'));
+        this.on('reconnecting', () => this._logger.log('Bot reconnecting...', 'reconnecting'));
+        this.on('error', error => this._logger.log(error.stack || error.message, 'error'));
+        this.on('warn', info => this._logger.log(info, 'warn'));
+
+        process.on('warning', warning => this._logger.log(warning.stack || warning.message, 'warn'));
+        require('../Functions/Numbers');
+        require('../Prototypes/_function');
         require('../Prototypes/_user');
     }
+
+    _getModuleDirectory(kind) {
+        if (!this._dirname) throw new Error('Set client._dirname before loading modules.');
+        return path.resolve(process.cwd(), kind);
+    }
+
     async fetchCommands(active = true, slash = false) {
-        if(slash) {
-            const slashcommands = await globPromise(`../../Server/${this._dirname}/_slashcommands/*/*.js`);
-            const arrSlash = [];
-            slashcommands.map((value) => {
-                const file = require(value);
-                if (!file?.name) return;
-                this.slashcommands.set(file.name, file);
-        
-                if (["MESSAGE", "USER"].includes(file.type)) delete file.description;
-                arrSlash.push(file);
-                
-            });
-            this.on("ready", async () => {
-                client.guilds.cache.map(async (x) => {
-                    x.commands.set(arrSlash);
-                })
-                this._logger.log(`${arrSlash.length} Slash Command(s) loaded.`, "ready")
-            })
+        if (!active && !slash) return;
+        const commandRoot = this._getModuleDirectory('_commands');
+
+        if (active && fs.existsSync(commandRoot)) {
+            const categories = fs.readdirSync(commandRoot, { withFileTypes: true }).filter(entry => entry.isDirectory());
+            for (const category of categories) {
+                const categoryPath = path.join(commandRoot, category.name);
+                const files = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
+                for (const file of files) {
+                    const CommandClass = require(path.join(categoryPath, file));
+                    const command = new CommandClass(this);
+                    if (command && typeof command.on === 'function') command.on();
+                }
+                this._logger.log(this._dirname + ': loaded ' + files.length + ' commands from ' + category.name + '.', 'load');
+            }
         }
-        if(!active) return;
-        let dirs = fs.readdirSync(`./_commands`, { encoding: "utf8" });
-        this._logger.log(`${black.bgHex('#D9A384') (this._dirname.toUpperCase())} ${dirs.length} category in client loaded.`, "category");
-        dirs.forEach(dir => {
-            let files = fs.readdirSync(`../../Server/${this._dirname}/_commands/${dir}`, { encoding: "utf8" }).filter(file => file.endsWith(".js"));
-            this._logger.log(`${black.bgHex('#D9A384') (this._dirname.toUpperCase())} ${files.length} commands loaded in ${dir} category.`, "load");
-            files.forEach(file => {
-                const cmd = new (require(`../../Server/${this._dirname}/_commands/${dir}/${file}`))(client);
-                if(cmd) cmd.on()
+
+        if (slash) {
+            const slashRoot = this._getModuleDirectory('_slashcommands');
+            if (!fs.existsSync(slashRoot)) return;
+            const files = await globPromise(path.join(slashRoot, '*', '*.js'));
+            const definitions = [];
+            for (const file of files) {
+                const command = require(file);
+                if (!command || !command.name) continue;
+                this.slashcommands.set(command.name, command);
+                definitions.push(command);
+            }
+            this.once('ready', async () => {
+                if (!this.sistem.Settings.guildID) {
+                    this._logger.log('Slash commands not registered: Settings.guildID is empty.', 'warn');
+                    return;
+                }
+                const guild = await this.guilds.fetch(this.sistem.Settings.guildID);
+                await guild.commands.set(definitions);
+                this._logger.log('Registered ' + definitions.length + ' slash commands.', 'ready');
             });
-        });
+        }
     }
 
     async fetchEvents(active = true) {
-        if(!active) return;
-        let dirs = fs.readdirSync('./_events', { encoding: "utf8" });
-        dirs.forEach(dir => {
-            let files = fs.readdirSync(`../../Server/${this._dirname}/_events/${dir}`, { encoding: "utf8" }).filter(file => file.endsWith(".js"));
-            files.forEach(file => {
-                const events = new (require(`../../Server/${this._dirname}/_events/${dir}/${file}`))(client);
-                if(events) events.on();
-            });
-        });
-    }
-    async connect(token) {
-     
-        if(!token) {
-            this._logger.log(`${black.bgHex('#D9A384')(this._dirname.toUpperCase())} Tokeni girilmediğinden dolayı bot kapanıyor...`,"error");
-            process.exit()
-            return;
+        if (!active) return;
+        const eventRoot = this._getModuleDirectory('_events');
+        if (!fs.existsSync(eventRoot)) return;
+        const categories = fs.readdirSync(eventRoot, { withFileTypes: true }).filter(entry => entry.isDirectory());
+        for (const category of categories) {
+            const categoryPath = path.join(eventRoot, category.name);
+            const files = fs.readdirSync(categoryPath).filter(file => file.endsWith('.js'));
+            for (const file of files) {
+                const EventClass = require(path.join(categoryPath, file));
+                const event = new EventClass(this);
+                if (event && typeof event.on === 'function') event.on();
+            }
         }
-                await this.login(token)
-                .then(a => {
-                 
-                }).catch(err => {
-                    this._logger.log(`${black.bgHex('#D9A384')(this._dirname.toUpperCase())} Botun tokeni doğrulanamadı. 5 Saniye sonra tekrardan denenecektir...`,"reconnecting")
-                    setTimeout(() => {
-                        this.login().catch(acar => {
-                            this._logger.log(`${black.bgHex('#D9A384')(this._dirname.toUpperCase())} => Bot tokeni tamamiyle doğrulanamadı.. Bot kapanıyor...`,"error")
-                            process.exit()
-                        })
-                    }, 5000)
-                }).catch(err => {
-                this._logger.log("MongoDB Bağlantısı Başarısız.", "error")
-                process.exit();
-            })
-        
+    }
+
+    async connect(token) {
+        if (!token) throw new Error(this._dirname + ' bot token is missing. Set the matching environment variable or Settings.Login value.');
+        try {
+            await this.login(token);
+            return this.user;
+        } catch (error) {
+            this._logger.log(this._dirname + ' login failed: ' + error.message, 'error');
+            throw error;
+        }
     }
 }
 
-module.exports = { MODLOFF }
+module.exports = { MODLOFF };
