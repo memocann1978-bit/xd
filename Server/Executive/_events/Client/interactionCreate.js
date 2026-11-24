@@ -1,4 +1,6 @@
 const { Event } = require('../../../../Global/Client/Structures/Default.Event');
+const GuardSettings = require('../../../../Global/Database/Schemas/Guards/Global.Guard.Settings');
+const { OPTIONS, getSettings, buildPanel } = require('../../../../Global/Source/Guard.Panel');
 
 class InteractionCreate extends Event {
     constructor(client) {
@@ -7,7 +9,23 @@ class InteractionCreate extends Event {
 
     async onLoad(interaction) {
         const client = this.client;
-        if (!interaction || !interaction.isChatInputCommand?.() && !interaction.isAutocomplete?.()) return;
+        if (!interaction) return;
+        if (interaction.isButton?.() && interaction.customId.startsWith('guardToggle:')) {
+            const [, key, ownerID] = interaction.customId.split(':');
+            const validKeys = new Set([...OPTIONS.map(([name]) => name), 'guildProtection', 'limit']);
+            if (!validKeys.has(key) || !interaction.guild) return interaction.reply({ content: 'Geçersiz panel işlemi.', ephemeral: true }).catch(() => null);
+            if (interaction.user.id !== ownerID) return interaction.reply({ content: 'Bu güvenlik panelini yalnızca açan kişi kullanabilir.', ephemeral: true }).catch(() => null);
+            try {
+                const current = await getSettings(interaction.guild.id);
+                await GuardSettings.updateOne({ guildID: interaction.guild.id }, { $set: { [key]: !current[key] } });
+                const updated = await getSettings(interaction.guild.id);
+                return interaction.update(buildPanel(updated, ownerID));
+            } catch (error) {
+                client._logger.log('Guard panel update failed: ' + error.message, 'error');
+                return interaction.reply({ content: 'Güvenlik ayarı kaydedilemedi.', ephemeral: true }).catch(() => null);
+            }
+        }
+        if (!interaction.isChatInputCommand?.() && !interaction.isAutocomplete?.()) return;
 
         const command = client.slashcommands.get(interaction.commandName);
         if (!command) {
