@@ -88,17 +88,17 @@ class guildMemberAdd extends Event {
             alwaysJoined.set(member.id, getir + 1)
         }
         if(_set.otoIsim && User && User.Name && User.Names && User.Gender && User.Gender != "Kayıtsız") {
-            await member.setNickname(`${member.user.displayName.includes(_set.tag) ? _set.tag + " " : (_set.tagsiz ? _set.tagsiz + " " : (_set.tag || ""))} ${User.Name}`).catch(err => {});    
+            await member.setNickname(`${(_set.tag && member.user.displayName.includes(_set.tag)) ? _set.tag + " " : (_set.tagsiz ? _set.tagsiz + " " : (_set.tag || ""))} ${User.Name}`).catch(err => {});    
         } else {
-            await member.setNickname(`${member.user.displayName.includes(_set.tag) ? _set.tag + " " : (_set.tagsiz ? _set.tagsiz + " " : (_set.tag || ""))} İsim | Yaş`).catch(err => {});    
+            await member.setNickname(`${(_set.tag && member.user.displayName.includes(_set.tag)) ? _set.tag + " " : (_set.tagsiz ? _set.tagsiz + " " : (_set.tag || ""))} İsim | Yaş`).catch(err => {});    
         }
         if(OneWeak) {
-            await member.setRoles(_set.şüpheliRolü)
+            if (_set.şüpheliRolü) await member.setRoles(_set.şüpheliRolü)
             await hoşgeldinKanal.send(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`);
             return member.guild.kanalBul("şüpheli-log").send({embeds: [new genEmbed().setDescription(`${member} isimli üye sunucuya katıldı fakat hesabı ${global.timeTag(Date.parse(member.user.createdAt))} açıldığı için şüpheli olarak işaretlendi.`)]});
         };
         if(_set.yasakTaglar && _set.yasakTaglar.some(tag => member.user.displayName.includes(tag))) {
-            await member.setRoles(_set.yasaklıTagRolü)
+            if (_set.yasaklıTagRolü) await member.setRoles(_set.yasaklıTagRolü)
             member.send(`**Merhaba!**
 Üzerinizde bulunan **\` ${_set.yasakTaglar.find(x => member.user.displayName.includes(x))} \`** bu sembol veya etiket yasaklandığı için sizi yasaklı kategorisine ekledik.
 \`\`\`
@@ -108,11 +108,11 @@ class guildMemberAdd extends Event {
             return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı fakat ismininde \` Yasaklı Tag \` bulundurduğu için cezalı olarak belirlendi.`);
         };
         if(Jail) {
-            await member.setRoles(_set.jailRolü)
+            if (_set.jailRolü) await member.setRoles(_set.jailRolü)
             return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı fakat aktif bir cezalandırılması bulunduğu için tekrardan cezalandırıldı.`);
         };
         if(Underworld) {
-          await member.setRoles(_set.underworldRolü)
+          if (_set.underworldRolü) await member.setRoles(_set.underworldRolü)
           return hoşgeldinKanal.send(`${member} isimli üye sunucumuza katıldı fakat aktif bir Underworld cezası bulunduğu için tekrardan Underworld'e gönderildi.`);
         };
         if(Forceban) {
@@ -212,14 +212,14 @@ async function rolTanımlama(üye, rol) {
     let Vk = await VK.findOne({_id: üye.id});
     let Dc = await DC.findOne({_id: üye.id});
     let Stream = await STREAM.findOne({_id: üye.id});
-    let startRoles = [...rol]
+    let startRoles = [...(rol || [])]
 
-    if(Mute) startRoles.push(_set.muteRolü)
+    if(Mute && _set.muteRolü) startRoles.push(_set.muteRolü)
     if(_set.vkCezalıRolü && Vk) startRoles.push(_set.vkCezalıRolü)
     if(_set.dcCezalıRolü && Dc) startRoles.push(_set.dcCezalıRolü)
     if(_set.streamerCezalıRolü && Stream) startRoles.push(_set.streamerCezalıRolü)
-    if(_set.type && üye.user.displayName.includes(_set.tag)) await startRoles.push(_set.tagRolü)
-    await üye.roles.set(startRoles).then(async (acar) => {})
+    if(_set.type && _set.tagRolü && _set.tag && üye.user.displayName.includes(_set.tag)) startRoles.push(_set.tagRolü)
+    await üye.roles.set(startRoles.filter(Boolean)).catch(error => global.client?._logger?.log('Default roles could not be applied: ' + error.message, 'warn'))
 }
 
 module.exports = guildMemberAdd;
