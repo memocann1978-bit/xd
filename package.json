@@ -20,14 +20,24 @@
     "path": "^0.12.7",
     "pm2": "^5.2.0",
     "require-reload": "^0.2.2",
-    "util": "^0.12.4"
+    "util": "^0.12.4",
+    "dotenv": "^16.4.5"
   },
-  "name": "new-bots",
-  "version": "1.0.0",
+  "name": "modloff-discord-bot",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Modular Discord moderation, community and automation bot.",
+  "main": "Server/Moderation/Global.Moderation.js",
+  "engines": {
+    "node": ">=18.18.0"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "pm2-runtime ecosystem.config.js",
+    "start:moderation": "node Server/Moderation/Global.Moderation.js",
+    "start:executive": "node Server/Executive/Global.Executive.js",
+    "check": "node scripts/check-syntax.js",
+    "test": "node --test"
   },
   "author": "",
-  "license": "ISC",
-  "description": ""
+  "license": "SEE LICENSE"
 }
