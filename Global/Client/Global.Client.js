@@ -37,6 +37,7 @@ class MODLOFF extends Client {
         this.on('reconnecting', () => this._logger.log('Bot reconnecting...', 'reconnecting'));
         this.on('error', error => this._logger.log(error.stack || error.message, 'error'));
         this.on('warn', info => this._logger.log(info, 'warn'));
+        process.on('unhandledRejection', reason => this._logger.log('Unhandled promise rejection: ' + (reason?.stack || reason), 'error'));
 
         process.on('warning', warning => this._logger.log(warning.stack || warning.message, 'warn'));
         require('../Functions/Numbers');
