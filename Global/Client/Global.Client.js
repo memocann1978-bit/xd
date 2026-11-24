@@ -17,6 +17,7 @@ class MODLOFF extends Client {
                 GatewayIntentBits.Guilds,
                 GatewayIntentBits.GuildMembers,
                 GatewayIntentBits.GuildModeration,
+                GatewayIntentBits.GuildPresences,
                 GatewayIntentBits.GuildMessages,
                 GatewayIntentBits.MessageContent,
                 GatewayIntentBits.GuildVoiceStates
