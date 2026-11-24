@@ -11,7 +11,7 @@ module.exports = {
     description: 'Destek talebi oluşturur veya mevcut talebi kapatır.',
     options: [
         {
-            name: 'oluştur',
+            name: 'olustur',
             description: 'Kişisel destek kanalı oluşturur.',
             type: ApplicationCommandOptionType.Subcommand,
             options: [
@@ -28,7 +28,7 @@ module.exports = {
 
     async onRequest(client, interaction) {
         const action = interaction.options.getSubcommand();
-        if (action === 'oluştur') {
+        if (action === 'olustur') {
             const existing = await Ticket.findOne({ guildID: interaction.guildId, creatorID: interaction.user.id, status: 'open' });
             if (existing) {
                 const existingChannel = await interaction.guild.channels.fetch(existing.channelID).catch(() => null);
