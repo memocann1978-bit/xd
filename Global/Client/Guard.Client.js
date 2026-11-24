@@ -1,4 +1,8 @@
-const { PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
+const { Client, GatewayIntentBits, Partials, Collection, PermissionFlagsBits, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require("discord.js")
+const { black } = require("chalk")
+const { glob } = require("glob")
+const { promisify } = require("util")
+const globPromise = promisify(glob)
 const fs = require('fs')
 
 const sistem = global.sistem = require('../Settings/_system.json');
@@ -23,16 +27,16 @@ class MODLOFF extends Client {
         * 
         */
         super({
-            options,
-            intents: Object.keys(GatewayIntentBits),
-            partials: Object.keys(Partials)
+            ...options,
+            intents: options?.intents || [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMembers, GatewayIntentBits.GuildModeration, GatewayIntentBits.GuildMessages, GatewayIntentBits.MessageContent],
+            partials: options?.partials || [Partials.Channel, Partials.GuildMember, Partials.Message, Partials.User]
         })
         
         this._logger = require("../Functions/Logger")
         require("../Functions/Dates")
         this.genEmbed = global.genEmbed = require("../Source/Embed")
         this.sistem = this.system = require("../Settings/_system.json")
-        GUILD.fetch(this.sistem.Settings.guildID)
+        global.client = this
         this.commands = new Collection()
         this.aliases = new Collection()
         this.slashcommands = new Collection()
