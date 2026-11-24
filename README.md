@@ -22,16 +22,15 @@ Bu liste geliştirme dalında bulunan özellikleri gösterir; her özelliğin ge
 
 1. Depoyu klonlayın ve proje klasörüne girin.
 2. `npm install` komutunu çalıştırın.
-3. `.env.example` dosyasını `.env` olarak kopyalayın.
-4. `.env` içindeki `MODERATION_BOT_TOKEN`, `EXECUTIVE_BOT_TOKEN`, `VOUCHER_BOT_TOKEN` ve `MONGODB_URI` değerlerini doldurun.
-5. `Global/Settings/_system.json` içindeki `Settings.guildID`, `Settings.root`, `Settings.prefix` ve diğer sunucu ayarlarını yapılandırın. Gerçek token veya veritabanı parolalarını bu dosyaya yazmayın.
-6. `npm run check` ile JavaScript sözdizimini doğrulayın; `npm test` ile regresyon testlerini çalıştırın.
-7. `npm start` ile PM2 üzerinden Moderation, Executive ve Voucher servislerini başlatın. Tek servis için `npm run start:moderation`, `npm run start:executive` veya `npm run start:voucher` kullanın.
+3. `Global/Settings/_system.json` içindeki `Login.Moderation`, `Login.Executive` ve `Login.Voucher` alanlarına ilgili bot tokenlarını yazın.
+4. Aynı dosyada `Settings.Database.MongoURL`, `Settings.guildID`, `Settings.root` ve `Settings.prefix` alanlarını yapılandırın.
+5. `npm run check` ile JavaScript sözdizimini doğrulayın; `npm test` ile regresyon testlerini çalıştırın.
+6. `npm start` ile PM2 üzerinden Moderation, Executive ve Voucher servislerini başlatın. Tek servis için `npm run start:moderation`, `npm run start:executive` veya `npm run start:voucher` kullanın.
 
 ## Güvenlik
 
-- Gerçek bot tokenlarını, MongoDB URI değerlerini ve üçüncü taraf lisans anahtarlarını Git'e göndermeyin.
-- `.env` dosyası `.gitignore` kapsamındadır. Sızmış olabilecek eski anahtarları ilgili sağlayıcı panelinden iptal edip yenileyin.
+- Bot tokenları ve MongoDB URI `_system.json` içinde düz metin tutulur. Bu dosyayı GitHub'a, ekran görüntülerine veya başkalarına göndermeyin; herkese açık depoda yalnızca boş şablon değerleri bulunsun.
+- Daha önce sızmış olabilecek tokenları Discord Developer Portal üzerinden sıfırlayın.
 - `eval` komutları varsayılan olarak devre dışıdır. Üretim ortamında açılması önerilmez.
 - Botun ihtiyaç duyduğu ayrıcalıklı Gateway Intents değerlerini Discord Developer Portal > Bot bölümünden etkinleştirin.
 - MongoDB kullanan özellikler için `MONGODB_URI` zorunludur.
