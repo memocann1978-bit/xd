@@ -2,6 +2,16 @@
 
 Discord.js v14 tabanlı, modüler topluluk yönetimi ve moderasyon botu.
 
+## Mevcut sistemler
+
+- Üye kayıt ve yeniden kayıt akışı
+- Moderasyon: kick, ban, timeout, timeout kaldırma ve mesaj temizleme
+- Ticket: özel destek kanalı oluşturma ve kapatma
+- Guard: interaktif güvenlik ayar paneli
+- Slash komutları: ping, sunucu bilgisi ve komut yardımı
+- Davet takibi, üye giriş/çıkış olayları ve istatistik altyapısı
+
+Bu liste geliştirme dalında bulunan özellikleri gösterir; her özelliğin gerçek Discord sunucusunda uçtan uca doğrulanması ayrıca gereklidir.
 ## Gereksinimler
 
 - Node.js 18.18 veya üzeri (önerilen: Node.js 20 LTS)
