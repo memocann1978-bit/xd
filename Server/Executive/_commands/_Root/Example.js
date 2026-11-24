@@ -10,7 +10,7 @@ class Example extends Command {
             usage: "Kullanımı çok basittir bence denemelisin.",
             category: "Others",
             aliases: ["ex","exa"],
-            enabled: true,
+            enabled: false,
             cooldown: 3500,
             permissions: [],
         });
