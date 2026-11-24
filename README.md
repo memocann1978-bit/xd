@@ -1,32 +1,41 @@
+# MODLOFF Discord Bot
 
-# V14 Public Bot
+Discord.js v14 tabanlı, modüler topluluk yönetimi ve moderasyon botu.
 
-Bu botun amacı, discordda olan public sunucularda **kayıt, moderasyon, istatistik** gibi işlemlerin kolaylıkla sağlanması için yapılmıştır.
+## Gereksinimler
 
+- Node.js 18.18 veya üzeri (önerilen: Node.js 20 LTS)
+- MongoDB bağlantısı (veritabanı kullanan modüller için)
+- Discord Developer Portal üzerinden oluşturulmuş bot uygulamaları ve gerekli Gateway Intents izinleri
 
+## Kurulum
 
+1. Depoyu klonlayın ve proje klasörüne girin.
+2. `npm install` komutunu çalıştırın.
+3. `.env.example` dosyasını `.env` olarak kopyalayın.
+4. `.env` içindeki `MODERATION_BOT_TOKEN`, `EXECUTIVE_BOT_TOKEN` ve `MONGODB_URI` değerlerini doldurun.
+5. `Global/Settings/_system.json` içindeki `Settings.guildID`, `Settings.root`, `Settings.prefix` ve diğer sunucu ayarlarını yapılandırın. Gerçek token veya veritabanı parolalarını bu dosyaya yazmayın.
+6. `npm run check` ile JavaScript sözdizimini doğrulayın.
+7. `npm start` ile PM2 üzerinden servisleri başlatın. Tek servis için `npm run start:moderation` veya `npm run start:executive` kullanın.
 
-## Ek olarak
+## Güvenlik
 
-Altyapının boş haline [Acar](https://github.com/acarfx/v14-temiz-altyapi) adresinden ulaşabilirsiniz. Altyapıda desteklerini esirgemeyen [Passenger](https://github.com/Passengerrr) ve [Only](https://github.com/onlybusinesss) kardeşlerime teşekkürlerimi sunuyorum.
+- Gerçek bot tokenlarını, MongoDB URI değerlerini ve üçüncü taraf lisans anahtarlarını Git'e göndermeyin.
+- `.env` dosyası `.gitignore` kapsamındadır. Sızmış olabilecek eski anahtarları ilgili sağlayıcı panelinden iptal edip yenileyin.
+- `eval` komutları varsayılan olarak devre dışıdır. Üretim ortamında açılması önerilmez.
+- Botun ihtiyaç duyduğu ayrıcalıklı Gateway Intents değerlerini Discord Developer Portal > Bot bölümünden etkinleştirin.
+- MongoDB kullanan özellikler için `MONGODB_URI` zorunludur.
 
-Yakın zamanda botlara ait ekran görüntülerini buraya ekleyeceğim.
+## Geliştirme
 
-Ücretli bot yaptırmak için, [Only](https://discord.com/users/331791735938351106)
-  
-## Teşekkürler
+- Komutlar: `Server/<BotAdı>/_commands/<Kategori>/`
+- Olaylar: `Server/<BotAdı>/_events/<Kategori>/`
+- Ortak istemci ve yapılar: `Global/Client/`
+- Veritabanı modelleri: `Global/Database/`
+- Sunucu yapılandırması: `Global/Settings/`
 
-[Acar](https://github.com/acarfx)  
-[Passenger](https://github.com/passengerrr)  
-[Only](https://github.com/onlybusinesss)  
-[Ronie](https://github.com/ronie1337)
+Yeni sistemler mevcut modüllerden bağımsız ve mümkün olduğunca ayrı servisler hâlinde eklenmelidir.
 
-
-Altyapıda emeği olan, buraya ekleyemediğim kardeşlerim. Hepinize teşekkürler benimle discorddan iletişime geçerseniz sizleri de ekleyebilirim.
 ## Lisans
 
-[Apache License 2.0](https://github.com/MODLOFF/v14-public/blob/main/LICENSE)
-
-Projenin dağıtılması/satılması kesinlikle yasaktır.
-
-  
+Depodaki `LICENSE` dosyasını ve kaynak projenin kullanım koşullarını inceleyin. README'deki Apache 2.0 atfı ile dağıtım/satış yasağı ifadesi birbiriyle çelişebildiğinden, yeniden dağıtım veya ticari kullanım öncesinde hak sahibinden yazılı izin alın.
