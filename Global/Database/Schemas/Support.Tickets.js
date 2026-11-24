@@ -11,5 +11,6 @@ const ticketSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 ticketSchema.index({ guildID: 1, creatorID: 1, status: 1 });
+ticketSchema.index({ guildID: 1, creatorID: 1 }, { unique: true, partialFilterExpression: { status: 'open' } });
 
 module.exports = mongoose.models.SupportTicket || mongoose.model('SupportTicket', ticketSchema);
